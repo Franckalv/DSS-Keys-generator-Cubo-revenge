@@ -1,0 +1,762 @@
+#include <iostream>
+#include <iomanip>
+#include <bitset>
+#include <sstream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+void printMatrix(int matrix[4][4]) {
+    
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+
+void printConcatenatedMatrix(int matrix[4][24]) {
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 24; ++j) {
+            cout << setw(3) << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+void rotateRight(int matrix[4][4], int times) {
+    times = times % 4; // Asegúrate de que el número de rotaciones esté en el rango [0, 3]
+    for (int t = 0; t < times; ++t) {
+        int temp[4][4];
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                temp[j][3 - i] = matrix[i][j]; // Rotación hacia la derecha
+            }
+        }
+        // Copiar los valores de vuelta a la matriz original
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                matrix[i][j] = temp[i][j];
+            }
+        }
+    }
+}
+
+void rotateLeft(int matrix[4][4], int times) {
+    times = times % 4; // Asegúrate de que el número de rotaciones esté en el rango [0, 3]
+    for (int t = 0; t < times; ++t) {
+        int temp[4][4];
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                temp[3 - j][i] = matrix[i][j]; // Rotación hacia la izquierda
+            }
+        }
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                matrix[i][j] = temp[i][j]; // Actualizar la matriz original
+            }
+        }
+    }
+}
+
+
+void getRow(const int matrix[4][4], int rowIndex, int row[4]) {
+    for (int i = 0; i < 4; ++i) {
+        row[i] = matrix[rowIndex][i];
+    }
+}
+
+void getCol(const int matrix[4][4], int colIndex, int col[4]) {
+    for (int i = 0; i < 4; ++i) {
+        col[i] = matrix[i][colIndex];
+    }
+}
+
+
+void exchangeRowCol(int row[4], int matrix[4][4], int colIndex) {
+    for (int i = 0; i < 4; ++i) {
+        matrix[i][colIndex] = row[i];
+    }
+}
+
+void exchangeColRow(int row[4], int matrix[4][4], int rowIndex) {
+    for (int i = 0; i < 4; ++i) {
+        matrix[rowIndex][i] = row[i];
+    }
+}
+
+void exchangeRow(int matrix1[4][4], int rowIndex1, int matrix2[4][4], int rowIndex2) {
+    for (int i = 0; i < 4; ++i) {
+        matrix2[rowIndex2][i] = matrix1[rowIndex1][i];
+    }
+}
+
+void exchangeCol(int matrix1[4][4], int colIndex1, int matrix2[4][4], int colIndex2) {
+    for (int i = 0; i < 4; ++i) {
+        matrix2[i][colIndex2] = matrix1[i][colIndex1];
+    }
+}
+void copyMatrix(const int source[4][4], int destination[4][4]) {
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            destination[i][j] = source[i][j];
+        }
+    }
+}
+
+
+void checkBitConditions(int bit1, int bit2, int bit3, int bit4, int bit5, int matrix[4][4], int matrix2[4][4], int matrix3[4][4], int matrix4[4][4], int matrix5[4][4], int matrix6[4][4]) {
+    
+    int firstRow[4] = { 0 };
+    int firstCol[4] = { 0 };
+    int matrix7[4][4];
+    int matrix8[4][4];
+    int matrix9[4][4];
+  
+    if (bit1 == 0 && bit2 == 0) {
+
+        if (bit3 == 0 && bit4 == 1) {
+            if (bit5 == 0) {
+                rotateRight(matrix, 1);
+                copyMatrix(matrix3, matrix7); 
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 3, firstRow);
+                exchangeRowCol(firstRow, matrix3,0);
+                getCol(matrix7, 0, firstCol);
+                exchangeColRow(firstCol, matrix4,3);
+                getRow(matrix8, 3, firstRow);
+                exchangeRowCol(firstRow, matrix5,0);
+                getCol(matrix9, 0, firstCol);
+                exchangeColRow(firstCol, matrix2,3);
+
+            }
+            else {
+                rotateLeft(matrix, 1);
+                copyMatrix(matrix3, matrix7);
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 3, firstRow);
+                exchangeRowCol(firstRow, matrix5, 0);
+                getCol(matrix9, 0, firstCol);
+                exchangeColRow(firstCol, matrix4, 3);
+                getRow(matrix8, 3, firstRow);
+                exchangeRowCol(firstRow, matrix3, 0);
+                getCol(matrix7, 0, firstCol);
+                exchangeColRow(firstCol, matrix2, 3);
+
+            }
+        }
+        else if (bit3 == 1 && bit4 == 0) {
+            copyMatrix(matrix4, matrix8);
+            copyMatrix(matrix5, matrix9);
+            exchangeRow(matrix2, 3, matrix4, 3);
+            exchangeCol(matrix3, 0, matrix5, 0);
+            exchangeRow(matrix8, 3, matrix2, 3);
+            exchangeCol(matrix9, 0, matrix3, 0);
+
+            if (bit5 == 0) {
+                rotateRight(matrix, 2);
+            }
+            else {
+                rotateLeft(matrix, 2);
+            }
+        }
+        else if (bit3 == 1 && bit4 == 1) {
+            if (bit5 == 0) {
+                rotateRight(matrix, 3);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 3, firstRow);
+                exchangeRowCol(firstRow, matrix5, 0);
+                getCol(matrix3, 0, firstCol);
+                exchangeColRow(firstCol, matrix2, 3);
+                getRow(matrix4, 3, firstRow);
+                exchangeRowCol(firstRow, matrix3, 0);
+                getCol(matrix9, 0, firstCol);
+                exchangeColRow(firstCol, matrix4, 3);
+            }
+            else {
+                rotateLeft(matrix, 3);
+                copyMatrix(matrix3, matrix7);
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 3, firstRow);
+                exchangeRowCol(firstRow, matrix3, 0);
+                getCol(matrix7, 0, firstCol);
+                exchangeColRow(firstCol, matrix4, 3);
+                getRow(matrix8, 3, firstRow);
+                exchangeRowCol(firstRow, matrix5, 0);
+                getCol(matrix9, 0, firstCol);
+                exchangeColRow(firstCol, matrix2, 3);
+
+            }
+        }
+       
+    }
+    else if (bit1 == 0 && bit2 == 1) {
+
+        if (bit3 == 0 && bit4 == 1) {
+            if (bit5 == 0) {
+
+                copyMatrix(matrix3, matrix7);
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 2, firstRow);
+                exchangeRowCol(firstRow, matrix3, 1);
+                getCol(matrix7, 1, firstCol);
+                exchangeColRow(firstCol, matrix4, 2);
+                getRow(matrix8, 2, firstRow);
+                exchangeRowCol(firstRow, matrix5, 1);
+                getCol(matrix9, 1, firstCol);
+                exchangeColRow(firstCol, matrix2, 2);
+
+            }
+            else {
+               
+                copyMatrix(matrix3, matrix7);
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 2, firstRow);
+                exchangeRowCol(firstRow, matrix5, 1);
+                getCol(matrix9, 1, firstCol);
+                exchangeColRow(firstCol, matrix4, 2);
+                getRow(matrix8, 2, firstRow);
+                exchangeRowCol(firstRow, matrix3, 1);
+                getCol(matrix7, 1, firstCol);
+                exchangeColRow(firstCol, matrix2, 2);
+            }
+        }
+        else if (bit3 == 1 && bit4 == 0) {
+            copyMatrix(matrix4, matrix8);
+            copyMatrix(matrix5, matrix9);
+            exchangeRow(matrix2, 2, matrix4, 2);
+            exchangeCol(matrix3, 1, matrix5, 1);
+            exchangeRow(matrix8, 2, matrix2, 2);
+            exchangeCol(matrix9, 1, matrix3, 1);
+          
+        }
+        else if (bit3 == 1 && bit4 == 1) {
+            if (bit5 == 0) {
+             
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 2, firstRow);
+                exchangeRowCol(firstRow, matrix5, 1);
+                getCol(matrix3, 1, firstCol);
+                exchangeColRow(firstCol, matrix2, 2);
+                getRow(matrix4, 2, firstRow);
+                exchangeRowCol(firstRow, matrix3, 1);
+                getCol(matrix9, 1, firstCol);
+                exchangeColRow(firstCol, matrix4, 2);
+
+            }
+            else {
+               
+                copyMatrix(matrix3, matrix7);
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 2, firstRow);
+                exchangeRowCol(firstRow, matrix3, 1);
+                getCol(matrix7, 1, firstCol);
+                exchangeColRow(firstCol, matrix4, 2);
+                getRow(matrix8, 2, firstRow);
+                exchangeRowCol(firstRow, matrix5, 1);
+                getCol(matrix9, 1, firstCol);
+                exchangeColRow(firstCol, matrix2, 2);
+            }
+        }
+
+    }
+    else if (bit1 == 1 && bit2 == 0) {
+
+    if (bit3 == 0 && bit4 == 1) {
+        if (bit5 == 0) {
+
+            copyMatrix(matrix3, matrix7);
+            copyMatrix(matrix4, matrix8);
+            copyMatrix(matrix5, matrix9);
+            getRow(matrix2, 1, firstRow);
+            exchangeRowCol(firstRow, matrix3, 2);
+            getCol(matrix7, 2, firstCol);
+            exchangeColRow(firstCol, matrix4, 1);
+            getRow(matrix8, 1, firstRow);
+            exchangeRowCol(firstRow, matrix5, 2);
+            getCol(matrix9, 2, firstCol);
+            exchangeColRow(firstCol, matrix2, 1);
+
+        }
+        else {
+
+            copyMatrix(matrix3, matrix7);
+            copyMatrix(matrix4, matrix8);
+            copyMatrix(matrix5, matrix9);
+            getRow(matrix2, 1, firstRow);
+            exchangeRowCol(firstRow, matrix5, 2);
+            getCol(matrix9, 2, firstCol);
+            exchangeColRow(firstCol, matrix4, 1);
+            getRow(matrix8, 1, firstRow);
+            exchangeRowCol(firstRow, matrix3, 2);
+            getCol(matrix7, 2, firstCol);
+            exchangeColRow(firstCol, matrix2, 1);
+        }
+    }
+    else if (bit3 == 1 && bit4 == 0) {
+        copyMatrix(matrix4, matrix8);
+        copyMatrix(matrix5, matrix9);
+        exchangeRow(matrix2, 1, matrix4, 1);
+        exchangeCol(matrix3, 2, matrix5, 2);
+        exchangeRow(matrix8, 1, matrix2, 1);
+        exchangeCol(matrix9, 2, matrix3, 2);
+
+    }
+    else if (bit3 == 1 && bit4 == 1) {
+        if (bit5 == 0) {
+
+            copyMatrix(matrix5, matrix9);
+            getRow(matrix2, 1, firstRow);
+            exchangeRowCol(firstRow, matrix5, 2);
+            getCol(matrix3, 2, firstCol);
+            exchangeColRow(firstCol, matrix2, 1);
+            getRow(matrix4, 1, firstRow);
+            exchangeRowCol(firstRow, matrix3, 2);
+            getCol(matrix9, 2, firstCol);
+            exchangeColRow(firstCol, matrix4, 1);
+
+        }
+        else {
+
+            copyMatrix(matrix3, matrix7);
+            copyMatrix(matrix4, matrix8);
+            copyMatrix(matrix5, matrix9);
+            getRow(matrix2, 1, firstRow);
+            exchangeRowCol(firstRow, matrix3, 2);
+            getCol(matrix7, 2, firstCol);
+            exchangeColRow(firstCol, matrix4, 1);
+            getRow(matrix8, 1, firstRow);
+            exchangeRowCol(firstRow, matrix5, 2);
+            getCol(matrix9, 2, firstCol);
+            exchangeColRow(firstCol, matrix2, 1);
+        }
+    }
+
+    }
+    else {
+
+        if (bit3 == 0 && bit4 == 1) {
+            if (bit5 == 0) {
+                rotateRight(matrix6, 1);
+                copyMatrix(matrix3, matrix7);
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 0, firstRow);
+                exchangeRowCol(firstRow, matrix3, 3);
+                getCol(matrix7, 3, firstCol);
+                exchangeColRow(firstCol, matrix4, 0);
+                getRow(matrix8, 0, firstRow);
+                exchangeRowCol(firstRow, matrix5, 3);
+                getCol(matrix9, 3, firstCol);
+                exchangeColRow(firstCol, matrix2, 0);
+
+            }
+            else {
+                rotateLeft(matrix6, 1);
+                copyMatrix(matrix3, matrix7);
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 0, firstRow);
+                exchangeRowCol(firstRow, matrix5, 3);
+                getCol(matrix9, 3, firstCol);
+                exchangeColRow(firstCol, matrix4, 0);
+                getRow(matrix8, 0, firstRow);
+                exchangeRowCol(firstRow, matrix3, 3);
+                getCol(matrix7, 3, firstCol);
+                exchangeColRow(firstCol, matrix2, 0);
+            }
+        }
+        else if (bit3 == 1 && bit4 == 0) {
+            copyMatrix(matrix4, matrix8);
+            copyMatrix(matrix5, matrix9);
+            exchangeRow(matrix2, 0, matrix4, 0);
+            exchangeCol(matrix3, 3, matrix5, 3);
+            exchangeRow(matrix8, 0, matrix2, 0);
+            exchangeCol(matrix9, 3, matrix3, 3);
+
+            if (bit5 == 0) {
+                rotateRight(matrix6, 2);
+            }
+            else {
+                rotateLeft(matrix6, 2);
+            }
+        }
+        else if (bit3 == 1 && bit4 == 1) {
+            if (bit5 == 0) {
+                rotateRight(matrix6, 3);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 0, firstRow);
+                exchangeRowCol(firstRow, matrix5, 3);
+                getCol(matrix3, 3, firstCol);
+                exchangeColRow(firstCol, matrix2, 0);
+                getRow(matrix4, 0, firstRow);
+                exchangeRowCol(firstRow, matrix3, 3);
+                getCol(matrix9, 3, firstCol);
+                exchangeColRow(firstCol, matrix4, 0);
+
+            }
+            else {
+                rotateLeft(matrix6, 3);
+                copyMatrix(matrix3, matrix7);
+                copyMatrix(matrix4, matrix8);
+                copyMatrix(matrix5, matrix9);
+                getRow(matrix2, 0, firstRow);
+                exchangeRowCol(firstRow, matrix3, 3);
+                getCol(matrix7, 3, firstCol);
+                exchangeColRow(firstCol, matrix4, 0);
+                getRow(matrix8, 0, firstRow);
+                exchangeRowCol(firstRow, matrix5, 3);
+                getCol(matrix9, 3, firstCol);
+                exchangeColRow(firstCol, matrix2, 0);
+            }
+        }
+
+    }
+   
+    
+}
+
+
+string rowToHex(const int row[4]) {
+    // Crear un bitset para representar la fila en binario
+    bitset<4> bits(row[0] << 3 | row[1] << 2 | row[2] << 1 | row[3]);
+
+    // Convertir el bitset a un número hexadecimal
+    stringstream ss;
+    ss << hex << uppercase <<setw(1) << setfill('0') << bits.to_ulong();
+
+    return ss.str();
+}
+
+// Función para convertir una matriz 4x4 a una secuencia hexadecimal
+string matrixToHex(const int matrix[4][4]) {
+    stringstream concatenatedHex;
+
+    // Convertir cada fila de la matriz a hexadecimal y concatenar
+    for (int i = 0; i < 4; ++i) {
+        string hexRow = rowToHex(matrix[i]);
+        concatenatedHex << hexRow;
+    }
+
+    return concatenatedHex.str();
+}
+
+void printMatrixInline(int matrix[4][4], const string& name) {
+    cout << name << " = [";
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            cout << matrix[i][j];
+            if (i != 3 || j != 3) { // Evitar un espacio extra al final
+                cout << " ";
+            }
+        }
+    }
+    cout << "]" << endl;
+}
+
+
+void invertBits(int arr[], int size) {
+    for (int i = 0; i < size; ++i) {
+        arr[i] = (arr[i] == 0) ? 1 : 0; // Invertir cada bit
+    }
+}
+
+// Función para rotar un arreglo a la izquierda
+void rotateArray(int arr[], int size, int positions) {
+    positions = positions % size; // Asegurarse de que las posiciones no excedan el tamaño del arreglo
+    vector<int> temp(positions); // Vector temporal para almacenar los primeros 'positions' elementos
+
+    // Copiar los primeros 'positions' elementos a un vector temporal
+    for (int i = 0; i < positions; ++i) {
+        temp[i] = arr[i];
+    }
+
+    // Mover el resto de los elementos a la izquierda
+    for (int i = 0; i < size - positions; ++i) {
+        arr[i] = arr[i + positions];
+    }
+
+    // Colocar los elementos del vector temporal al final del arreglo
+    for (int i = 0; i < positions; ++i) {
+        arr[size - positions + i] = temp[i];
+    }
+}
+
+// Función que realiza las operaciones y retorna el arreglo modificado
+vector<int> checkBitConditionsf(int bit1, int bits[], int size) {
+    vector<int> result(bits, bits + size);
+
+    if (bit1 == 0) {
+        invertBits(result.data(), size); // Invertir los bits (0 -> 1 y 1 -> 0)
+    }
+    else {
+        rotateArray(result.data(), size, 8); // Rotar 8 posiciones a la izquierda
+    }
+
+    return result; // Retornar el vector modificado
+}
+
+int hexToDecimal(string hexStr) {
+    int decimalNum = 0;
+    int len = hexStr.length();
+
+    // Iteramos sobre cada dígito del número hexadecimal
+    for (int i = 0; i < len; i++) {
+        // Convertimos cada dígito hexadecimal a su valor decimal
+        int digit = hexStr[i];
+        if (digit >= '0' && digit <= '9') {
+            digit -= '0';
+        }
+        else if (digit >= 'A' && digit <= 'F') {
+            digit = digit - 'A' + 10;
+        }
+        else if (digit >= 'a' && digit <= 'f') {
+            digit = digit - 'a' + 10;
+        }
+        else {
+            cout << "Caracter hexadecimal inválido" << endl;
+            return -1; // Indicamos un error
+        }
+
+        // Calculamos el valor decimal del dígito y lo sumamos al resultado
+        decimalNum += digit * pow(16, len - i - 1);
+    }
+
+    return decimalNum;
+}
+
+int main() {
+    // Definición de las matrices 4x4
+    int C1[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}
+    };
+
+    int C2[4][4] = {
+        {1, 1, 1, 1},
+        {1, 1, 1, 1},
+        {1, 1, 1, 1},
+        {1, 1, 1, 1}
+    };
+
+    int C3[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}
+    };
+
+    int C4[4][4] = {
+        {1, 1, 1, 1},
+        {1, 1, 1, 1},
+        {1, 1, 1, 1},
+        {1, 1, 1, 1}
+    };
+
+    int C5[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}
+    };
+
+    int C6[4][4] = {
+        {1, 1, 1, 1},
+        {1, 1, 1, 1},
+        {1, 1, 1, 1},
+        {1, 1, 1, 1}
+    };
+
+    printMatrixInline(C1, "C1");
+    printMatrixInline(C2, "C2");
+    printMatrixInline(C3, "C3");
+    printMatrixInline(C4, "C4");
+    printMatrixInline(C5, "C5");
+    printMatrixInline(C6, "C6");
+
+    string hexStr;
+
+    cout << "\n" << endl;
+    cout << "Introduce el valor hexadecimal (por ejemplo, 2AF3): ";
+    cin >> hexStr;
+
+    int decimalNum = hexToDecimal(hexStr);
+    
+    if (decimalNum > 65535) {
+        cout << "El valor hexadecimal que se presento, supera la cantidad maxima en bits que es de 16" << endl;
+        cout << "Valor maximo hexadecimal = 'FFFF' " << endl;
+
+        main();
+        return 0;
+    }
+    else
+    {
+        // Llamar a la función
+        unsigned int hexValue;
+        stringstream ss;
+        ss << hex << hexStr;
+        ss >> hexValue;
+
+        // Convertir el número entero a una representación binaria
+        bitset<16> binaryValue(hexValue);
+
+        // Imprimir el valor binario
+        cout << "Hexadecimal: " << hexStr << endl;
+        cout << "Binario: " << binaryValue << endl;
+
+
+        int bits[16];
+        for (int i = 0; i < 16; ++i) {
+            bits[i] = binaryValue[15 - i];
+        }
+
+
+
+
+        // Extraer los bits relevantes
+        bool c1s1 = binaryValue[0];
+        bool c1s2 = binaryValue[1];
+        bool c1r1 = binaryValue[2];
+        bool c1r2 = binaryValue[3];
+        bool c1se = binaryValue[4];
+        bool c2s1 = binaryValue[5];
+        bool c2s2 = binaryValue[6];
+        bool c2r1 = binaryValue[7];
+        bool c2r2 = binaryValue[8];
+        bool c2se = binaryValue[9];
+        bool c5s1 = binaryValue[10];
+        bool c5s2 = binaryValue[11];
+        bool c5r1 = binaryValue[12];
+        bool c5r2 = binaryValue[13];
+        bool c5se = binaryValue[14];
+        bool prim = binaryValue[15];
+
+        checkBitConditions(c1s1, c1s2, c1r1, c1r2, c1se, C5, C1, C4, C3, C2, C6);
+        checkBitConditions(c5s1, c5s2, c5r1, c5r2, c5se, C2, C5, C3, C6, C1, C4);
+        checkBitConditions(c2s1, c2s2, c2r1, c2r2, c2se, C1, C2, C6, C4, C5, C3);
+        
+        
+        
+        vector<int> modifiedBits = checkBitConditionsf(prim, bits, 16);
+
+        cout << "\n" << endl;
+        cout << " primera rotacion" << endl;
+        cout << "\n" << endl;
+        int concatenated1[4][24] = {};
+
+        // Concatenar las matrices horizontalmente
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                concatenated1[i][j] = C6[i][j];
+                concatenated1[i][j + 4] = C5[i][j];
+                concatenated1[i][j + 8] = C4[i][j];
+                concatenated1[i][j + 12] = C3[i][j];
+                concatenated1[i][j + 16] = C2[i][j];
+                concatenated1[i][j + 20] = C1[i][j];
+            }
+        }
+
+        // Imprimir la matriz concatenada
+        printConcatenatedMatrix(concatenated1);
+
+        // Matriz concatenada
+        string hexC1 = matrixToHex(C1);
+        string hexC2 = matrixToHex(C2);
+        string hexC3 = matrixToHex(C3);
+        string hexC4 = matrixToHex(C4);
+        string hexC5 = matrixToHex(C5);
+        string hexC6 = matrixToHex(C6);
+
+        // Concatenar los valores hexadecimales
+        string concatenatedHex = hexC6 + hexC5 + hexC4 + hexC3 + hexC2 + hexC1;
+
+        // Imprimir los valores hexadecimales
+
+        cout << "Parametro: " << concatenatedHex << endl;
+
+        cout << "\n" << endl;
+        cout << " segunda rotacion" << endl;
+        cout << "\n" << endl;
+
+        bitset<16> binaryValue2;
+        for (int i = 0; i < 16; ++i) {
+            binaryValue2[i] = modifiedBits[15 - i];  // Usar [15 - i] para invertir los bits
+        }
+
+        // Imprimir el nuevo bitset
+        cout << "Nuevo valor binario: " << binaryValue2 << endl;
+        cout << "\n" << endl;
+        bool c1s01 = binaryValue2[0];
+        bool c1s02 = binaryValue2[1];
+        bool c1r01 = binaryValue2[2];
+        bool c1r02 = binaryValue2[3];
+        bool c1s0e = binaryValue2[4];
+        bool c2s01 = binaryValue2[5];
+        bool c2s02 = binaryValue2[6];
+        bool c2r01 = binaryValue2[7];
+        bool c2r02 = binaryValue2[8];
+        bool c2s0e = binaryValue2[9];
+        bool c5s01 = binaryValue2[10];
+        bool c5s02 = binaryValue2[11];
+        bool c5r01 = binaryValue2[12];
+        bool c5r02 = binaryValue2[13];
+        bool c5s0e = binaryValue2[14];
+
+
+        checkBitConditions(c1s01, c1s02, c1r01, c1r02, c1s0e, C6, C1, C2, C3, C4, C5);
+        checkBitConditions(c2s01, c2s02, c2r01, c2r02, c2s0e, C1, C2, C6, C4, C5, C3);
+        checkBitConditions(c5s01, c5s02, c5r01, c5r02, c5s0e, C2, C5, C3, C6, C1, C4);
+        int newConcatenated1[4][24] = {};
+
+        // Concatenar las matrices horizontalmente después de la segunda rotación
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                newConcatenated1[i][j] = C6[i][j];
+                newConcatenated1[i][j + 4] = C5[i][j];
+                newConcatenated1[i][j + 8] = C4[i][j];
+                newConcatenated1[i][j + 12] = C3[i][j];
+                newConcatenated1[i][j + 16] = C2[i][j];
+                newConcatenated1[i][j + 20] = C1[i][j];
+            }
+        }
+
+        // Imprimir la nueva matriz concatenada
+        printConcatenatedMatrix(newConcatenated1);
+
+        // Concatenar los valores hexadecimales de la matriz actualizada
+        hexC1 = matrixToHex(C1);
+        hexC2 = matrixToHex(C2);
+        hexC3 = matrixToHex(C3);
+        hexC4 = matrixToHex(C4);
+        hexC5 = matrixToHex(C5);
+        hexC6 = matrixToHex(C6);
+
+        // Concatenar los valores hexadecimales
+        concatenatedHex = hexC6 + hexC5 + hexC4 + hexC3 + hexC2 + hexC1;
+
+        // Imprimir los valores hexadecimales actualizados
+        cout << "Nuevo Parametro: " << concatenatedHex << endl;
+
+        std::cout << "\n¿Desea volver a ejecutar? (s/n): ";
+        char respuesta;
+        std::cin >> respuesta;
+        if (respuesta == 's' || respuesta == 'S') {
+            cout << "\n";
+            main();
+        }
+        return 0;
+    }
+}
